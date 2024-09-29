@@ -1,0 +1,85 @@
+
+#define LED1_PIN1 11   
+#define LED1_PIN2 9  
+#define LED1_PIN3 10  
+#define LED2_PIN4 8 
+#define LED2_PIN5 6  
+#define LED2_PIN6 7
+#define LED3_PIN7 5 
+#define LED3_PIN8 4
+#define LED3_PIN9 3
+#define CONTROL_PIN 2
+
+const int led1Pins[] = {LED1_PIN1, LED1_PIN2, LED1_PIN3};
+const int led2Pins[] = {LED2_PIN4, LED2_PIN5, LED2_PIN6};
+const int led3Pins[] = {LED3_PIN7, LED3_PIN8, LED3_PIN9};
+
+bool ledstate = false;
+
+void setup() {
+  for (int i = 0; i < 3; i++) {
+    pinMode(led1Pins[i], OUTPUT);
+    pinMode(led2Pins[i], OUTPUT);
+    pinMode(led3Pins[i], OUTPUT);
+  }
+  pinMode(CONTROL_PIN, INPUT);
+  Serial.begin(9600);
+}
+
+void led1_colors(int r, int g, int b) {
+  analogWrite(LED1_PIN1, r);
+  analogWrite(LED1_PIN2, g);
+  analogWrite(LED1_PIN3, b);
+}
+
+void led2_colors(int r, int g, int b) {
+  analogWrite(LED2_PIN4, r);
+  analogWrite(LED2_PIN5, g);
+  analogWrite(LED2_PIN6, b);
+}
+
+void led3_colors(int r, int g, int b) {
+  analogWrite(LED3_PIN7, r);
+  analogWrite(LED3_PIN8, g);
+  analogWrite(LED3_PIN9, b);
+}
+
+void apagarSemaforos() {
+  led1_colors(0, 0, 0);
+  led2_colors(0, 0, 0);
+  led3_colors(0, 0, 0);
+}
+
+void cicloSemaforos() {
+// Semáforo 1 en verde, semáforo 2 y 3 en rojo
+  led1_colors(0, 0, 255);  
+  led2_colors(255, 0, 0); 
+  led3_colors(255, 0, 0);  
+  delay(2000);             
+  if (digitalRead(CONTROL_PIN) == LOW) return; 
+  
+// Semáforo 2 en verde, semáforo 1 y 3 en rojo
+  led1_colors(255, 0, 0);  
+  led2_colors(0, 0, 255);  
+  led3_colors(255, 0, 0); 
+  delay(2000);            
+  if (digitalRead(CONTROL_PIN) == LOW) return; 
+  
+// Semáforo 3 en verde, semáforo 1 y 2 en rojo
+  led1_colors(255, 0, 0);  
+  led2_colors(255, 0, 0);  
+  led3_colors(0, 0, 255);  
+  delay(2000);             
+  if (digitalRead(CONTROL_PIN) == LOW) return; 
+}
+
+void loop() {
+  int switchState = digitalRead(CONTROL_PIN);
+
+  if (switchState == HIGH) {
+    cicloSemaforos();
+  } else {
+    apagarSemaforos();
+  }
+}
+
